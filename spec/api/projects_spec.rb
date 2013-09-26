@@ -21,6 +21,7 @@ describe "Projects api" do
   end
 
   context 'when POST /projects' do
+    
     it 'should create a new project from a github repo' do
       repo_fullname = "exceedhl/clabric"
       response = <<-END
@@ -64,10 +65,6 @@ describe "Projects api" do
       expect(error_message(last_response)).to eq("must provide valid github repo url")
     end
 
-  end
-
-  def error_message(response) 
-    JSON.parse(last_response.body)["error"]
   end
   
 end

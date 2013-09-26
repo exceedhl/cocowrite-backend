@@ -1,5 +1,4 @@
 require 'model/project'
-require 'em-synchrony'
 require 'em-synchrony/em-http'
 
 module Cocowrite

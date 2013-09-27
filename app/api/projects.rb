@@ -51,6 +51,14 @@ module Cocowrite
           end
         end
         
+        route_param :uuid do
+          get do
+            project = Project.where(:uuid => params[:uuid]).first
+            error!(error_message("project #{params[:uuid]} does not exist"), 404) if project.nil?
+            project.extend(ProjectRepresenter).to_json
+          end
+        end
+        
       end      
     end
   end

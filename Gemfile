@@ -15,6 +15,7 @@ gem 'uuidtools'
 group :development do
   gem 'rspec'
   gem 'rspec-extra-formatters'
+  gem 'machinist'
   gem 'guard-rspec'
   gem 'guard-bundler'
   gem 'rack-test'

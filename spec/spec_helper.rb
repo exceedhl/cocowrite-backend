@@ -14,5 +14,9 @@ module JSONTestHelpers
 end
 
 RSpec.configure do |c|
+
   c.include JSONTestHelpers
+  
 end
+
+require 'blueprint'

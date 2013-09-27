@@ -5,7 +5,7 @@ guard :bundler do
   watch('Gemfile')
 end
 
-guard :rspec do
+guard :rspec, :cli => "--color --format nested" do
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^(.+)\.rb$}) { "spec" }
   watch(%r{^app/(.+)\.rb$}) { "spec" }

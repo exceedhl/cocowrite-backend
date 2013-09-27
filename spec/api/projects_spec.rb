@@ -75,4 +75,29 @@ describe "Projects api" do
 
   end
   
+  context "when GET /projects/:uuid" do
+  
+    it 'should return project by uuid' do
+      project = Project.make!
+      get "/projects/#{project.uuid}"
+      body = JSON.parse(last_response.body)
+      expect(last_response.status).to be(200)
+      expect(body['name']).to eq(project.name)
+      expect(body['description']).to eq(project.description)
+      expect(body['url']).to eq(project.url)
+      expect(body['uuid']).to eq(project.uuid)
+    end
+    
+    it 'should return 404 if no project is found' do
+      get "/projects/no-such-a-project"
+      expect(last_response.status).to be(404)      
+    end
+    
+    it 'should return 405 if no uuid id provided' do
+      get "/projects"
+      expect(last_response.status).to be(405)      
+    end
+    
+  end
+  
 end

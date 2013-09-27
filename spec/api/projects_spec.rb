@@ -24,6 +24,9 @@ describe "Projects api" do
     
     it 'should create a new project from a github repo' do
       repo_fullname = "exceedhl/clabric"
+      name = "clabric"
+      description = "fabric like tool for clojure"
+      url = "https://github.com/exceedhl/clabric"
       response = <<-END
       {
         "name": "clabric",
@@ -36,10 +39,15 @@ describe "Projects api" do
       
       post "/projects", {:repo => "https://github.com/#{repo_fullname}"}
       expect(last_response.status).to be(201)
+      body = JSON.parse(last_response.body)
+      expect(body['name']).to eq(name)
+      expect(body['description']).to eq(description)
+      expect(body['url']).to eq(url)
+      expect(body['uuid']).to_not be_nil
       
-      p = Project.where(name: "clabric").first
-      expect(p.description).to eq("fabric like tool for clojure")
-      expect(p.url).to eq("https://github.com/exceedhl/clabric")
+      p = Project.where(name: name).first
+      expect(p.description).to eq(description)
+      expect(p.url).to eq(url)
     end
     
     it 'should return error if github repo url is invalid' do

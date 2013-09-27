@@ -2,4 +2,4 @@
 * auto rspec
 * auto watch and reload in goliath dev mode
 * different config params in dev and prod env
-* 
+* check the EM, em-http-request, em-http and em-synchrony, and goliath impl.

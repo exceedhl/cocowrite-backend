@@ -1,4 +1,5 @@
 require 'model/project'
+require 'api/representer/project_representer'
 require 'em-synchrony/em-http'
 
 module Cocowrite
@@ -43,6 +44,8 @@ module Cocowrite
                 :description => res["description"], 
                 :url => res["html_url"], 
                 :created_at => Time.now})
+              .extend(ProjectRepresenter)
+              .to_json
           else
             error!(error_message("invalid github repo"), 403)
           end

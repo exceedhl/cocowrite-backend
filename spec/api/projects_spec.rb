@@ -4,6 +4,7 @@ require "model/project"
 
 describe "Projects api" do
   include Rack::Test::Methods
+  include Cocowrite::API::UrlHelpers
 
   def app
     Cocowrite::API::Projects
@@ -63,14 +64,14 @@ describe "Projects api" do
 
       post "/projects", {:repo => "https://github.com/#{repo_fullname}"}
       expect(last_response.status).to be(403)
-      expect(error_message(last_response)).to eq("invalid github repo")
+      expect(last_response.body).to eq("invalid github repo")
       expect(Project.all.size).to be(0)
     end
     
     it 'should return error if param is incorrect' do
       post "/projects", {:repo => "incorrect param"}
       expect(last_response.status).to be(403)
-      expect(error_message(last_response)).to eq("must provide valid github repo url")
+      expect(last_response.body).to eq("You must provide a valid github repo url")
     end
 
   end
@@ -86,6 +87,7 @@ describe "Projects api" do
       expect(body['description']).to eq(project.description)
       expect(body['url']).to eq(project.url)
       expect(body['uuid']).to eq(project.uuid)
+      expect(body['links'][0]['href']).to eq(projects_url(body['uuid']))
     end
     
     it 'should return 404 if no project is found' do

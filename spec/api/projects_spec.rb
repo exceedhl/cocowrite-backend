@@ -31,6 +31,7 @@ describe "Projects api" do
       response = <<-END
       {
         "name": "clabric",
+        "full_name": "exceedhl/clabric",
         "html_url": "https://github.com/exceedhl/clabric",
         "description": "fabric like tool for clojure"
       }
@@ -42,6 +43,7 @@ describe "Projects api" do
       expect(last_response.status).to be(201)
       body = JSON.parse(last_response.body)
       expect(body['name']).to eq(name)
+      expect(body['full_name']).to eq(repo_fullname)
       expect(body['description']).to eq(description)
       expect(body['url']).to eq(url)
       expect(body['uuid']).to_not be_nil
@@ -64,7 +66,7 @@ describe "Projects api" do
 
       post "/projects", {:repo => "https://github.com/#{repo_fullname}"}
       expect(last_response.status).to be(403)
-      expect(last_response.body).to eq("invalid github repo")
+      expect(last_response.body).to eq("Not Found")
       expect(Project.all.size).to be(0)
     end
     

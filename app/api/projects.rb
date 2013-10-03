@@ -31,13 +31,14 @@ module Cocowrite
             res = JSON.parse(req.response)
             Project.create({
                 :name => res["name"], 
+                :full_name => res["full_name"],
                 :description => res["description"], 
                 :url => res["html_url"], 
                 :created_at => Time.now})
               .extend(ProjectRepresenter)
               .to_json
           else
-            error!("invalid github repo", 403)
+            error!(JSON.parse(req.response)["message"], 403)
           end
         end
         

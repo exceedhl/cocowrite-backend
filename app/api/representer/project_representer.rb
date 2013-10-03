@@ -7,6 +7,7 @@ module ProjectRepresenter
   include Cocowrite::API::UrlHelpers
 
   property :name
+  property :full_name
   property :description
   property :url
   property :uuid

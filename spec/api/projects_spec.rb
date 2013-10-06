@@ -57,7 +57,7 @@ describe "Projects api" do
       repo_fullname = "someone/invalidrepo"
       response = <<-END
       {
-        "message": "Not Found",
+        "message": "Some error from github",
         "documentation_url": "http://developer.github.com/v3"
       }
       END
@@ -66,14 +66,16 @@ describe "Projects api" do
 
       post "/projects", {:repo => "https://github.com/#{repo_fullname}"}
       expect(last_response.status).to be(403)
-      expect(last_response.body).to eq("Not Found")
+      body = JSON.parse(last_response.body)
+      expect(body['error']).to eq("Some error from github")
       expect(Project.all.size).to be(0)
     end
     
     it 'should return error if param is incorrect' do
       post "/projects", {:repo => "incorrect param"}
       expect(last_response.status).to be(403)
-      expect(last_response.body).to eq("You must provide a valid github repo url")
+      body = JSON.parse(last_response.body)
+      expect(body['error']).to eq("You must provide a valid github repo url")
     end
 
   end

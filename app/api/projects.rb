@@ -17,6 +17,10 @@ module Cocowrite
     
     class Projects < Grape::API
       
+      format :json
+      content_type :txt, "text/plain"
+      default_error_formatter :txt
+      
       rescue_from :all
       
       resources :projects do 
@@ -36,7 +40,6 @@ module Cocowrite
                 :url => res["html_url"], 
                 :created_at => Time.now})
               .extend(ProjectRepresenter)
-              .to_json
           else
             error!(JSON.parse(req.response)["message"], 403)
           end
@@ -46,7 +49,7 @@ module Cocowrite
           get do
             project = Project.where(:uuid => params[:uuid]).first
             error!("Project #{params[:uuid]} does not exist", 404) if project.nil?
-            project.extend(ProjectRepresenter).to_json
+            project.extend(ProjectRepresenter)
           end
         end
         

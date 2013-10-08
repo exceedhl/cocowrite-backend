@@ -36,7 +36,7 @@ describe "Documents api" do
       expect(last_response.status).to eq(200)
       expect(JSON.parse(last_response.body)['links'][0]['href']).to eq("http://localhost:8888/#{docsha}.pdf")
       cd = CompiledDocument.where({:project_id => project, :sha => docsha, :format => 'pdf'}).first
-      expect(cd.status).to eq('compilation_succeed')
+      expect(cd.status).to eq(:compilation_succeed)
     end
   
     it 'should return 404 if project not found' do
@@ -79,7 +79,7 @@ describe "Documents api" do
       expect(last_response.status).to eq(500)
       expect(JSON.parse(last_response.body)['error']).to eq("Document conversion failed.")
       cd = CompiledDocument.where({:project_id => project, :sha => docsha, :format => 'pdf'}).first
-      expect(cd.status).to eq('compilation_fail')
+      expect(cd.status).to eq(:compilation_fail)
       
     end
     

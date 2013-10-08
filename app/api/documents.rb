@@ -37,7 +37,7 @@ module Cocowrite
                 status, log = Cocowrite::DocumentConverter::run_pandoc response.body, "#{params[:sha]}.#{format}"
                 cd.status = status
                 cd.save!
-                if status == 'compilation_succeed'
+                if cd.status_compilation_succeed?
                   cd.extend(CompiledDocumentRepresenter)
                 else
                   error!("Document conversion failed.", 500)

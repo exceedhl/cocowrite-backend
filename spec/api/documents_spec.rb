@@ -33,8 +33,6 @@ describe "Documents api" do
         .to_return(:body => response, :status => 200)
       
       get "/projects/#{project.uuid}/documents/#{docsha}/pdf"
-      require 'pp'
-      pp last_response
       expect(last_response.status).to eq(200)
       expect(JSON.parse(last_response.body)['links'][0]['href']).to eq("http://localhost:8888/#{docsha}.pdf")
       cd = CompiledDocument.where({:project_id => project, :sha => docsha, :format => 'pdf'}).first
@@ -70,6 +68,18 @@ describe "Documents api" do
     end
     
     it 'should return 500 if pdf can not be generated' do
+      docsha = "fefa1e283874e4a87d88a99b39402d3797d966db"
+      project = Project.make!
+      response = "some doc contnet"
+      stub_request(:get, "https://api.github.com/repos/#{project.full_name}/git/blobs/#{docsha}")
+        .to_return(:body => response, :status => 200)
+      Cocowrite::DocumentConverter::LATEX_TEMPLATE = "non/existent/template"
+      
+      get "/projects/#{project.uuid}/documents/#{docsha}/pdf"
+      expect(last_response.status).to eq(500)
+      expect(JSON.parse(last_response.body)['error']).to eq("Document conversion failed.")
+      cd = CompiledDocument.where({:project_id => project, :sha => docsha, :format => 'pdf'}).first
+      expect(cd.status).to eq('compilation_fail')
       
     end
     

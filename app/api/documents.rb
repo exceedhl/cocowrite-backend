@@ -1,8 +1,8 @@
 require 'model/project'
 require 'model/compiled-document'
 require 'api/representer/compiled-document-representer'
-require 'em-synchrony/em-http'
 require 'util/document-converter'
+require 'api/github-client'
 
 module Cocowrite
   module API
@@ -27,19 +27,23 @@ module Cocowrite
               projects = Project.where(:uuid => params[:uuid])
               error!("Project with uuid #{params[:uuid]} is not found", 404) if projects.size == 0
               project = projects.first
-              req = EM::HttpRequest.new("https://api.github.com/repos/#{project.full_name}/git/blobs/#{params[:sha]}").get
-              if (req.response_header.status == 200) 
+              client = GitHubClient.new
+              response = client.get "/repos/#{project.full_name}/git/blobs/#{params[:sha]}"
+              if (response.ok?) 
                 cd = CompiledDocument.create(
                   :project => project, 
                   :format => format, 
                   :sha => params[:sha])
-                status, log = Cocowrite::DocumentConverter::run_pandoc req.response, "#{params[:sha]}.#{format}"
+                status, log = Cocowrite::DocumentConverter::run_pandoc response.body, "#{params[:sha]}.#{format}"
                 cd.status = status
                 cd.save!
-
-                cd.extend(CompiledDocumentRepresenter)
+                if status == 'compilation_succeed'
+                  cd.extend(CompiledDocumentRepresenter)
+                else
+                  error!("Document conversion failed.", 500)
+                end
               else
-                error!(JSON.parse(req.response)["message"], 404)
+                error!(response.data["message"], 404)
               end
             end
             

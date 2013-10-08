@@ -1,6 +1,6 @@
 require 'model/project'
 require 'api/representer/project-representer'
-require 'em-synchrony/em-http'
+require 'api/github-client'
 
 module Cocowrite
   module API
@@ -28,17 +28,18 @@ module Cocowrite
         end
         post do
           repo_fullname = GITHUB_URL_PATTERN.match(params[:repo])[:repo_fullname]
-          req = EM::HttpRequest.new("https://api.github.com/repos/#{repo_fullname}").get
-          if (req.response_header.status == 200) 
-            res = JSON.parse(req.response)
+          client = GitHubClient.new
+          res = client.get "/repos/#{repo_fullname}"
+          if (res.ok?) 
+            data = res.data
             Project.create({
-                :name => res["name"], 
-                :full_name => res["full_name"],
-                :description => res["description"], 
-                :url => res["html_url"]})
+                :name => data["name"], 
+                :full_name => data["full_name"],
+                :description => data["description"], 
+                :url => data["html_url"]})
               .extend(ProjectRepresenter)
           else
-            error!(JSON.parse(req.response)["message"], 403)
+            error!(res.data["message"], 403)
           end
         end
         

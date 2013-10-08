@@ -4,8 +4,6 @@ require 'model/project'
 require 'model/compiled-document'
 
 describe "Documents api" do
-  include Rack::Test::Methods
-  include Cocowrite::API::UrlHelpers
 
   def app
     Cocowrite::API::Documents
@@ -14,13 +12,6 @@ describe "Documents api" do
   before(:each) do
     Project.delete_all
     CompiledDocument.delete_all
-  end
-  
-  around(:each) do |example|
-    EM.synchrony do
-      example.run
-      EM.stop
-    end
   end
 
   context 'when GET /projects/:uuid/documents/:sha/pdf' do

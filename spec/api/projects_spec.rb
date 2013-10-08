@@ -3,8 +3,6 @@ require "api/projects"
 require "model/project"
 
 describe "Projects api" do
-  include Rack::Test::Methods
-  include Cocowrite::API::UrlHelpers
 
   def app
     Cocowrite::API::Projects
@@ -14,13 +12,6 @@ describe "Projects api" do
     Project.delete_all
   end
   
-  around(:each) do |example|
-    EM.synchrony do
-      example.run
-      EM.stop
-    end
-  end
-
   context 'when POST /projects' do
     
     it 'should create a new project from a github repo' do

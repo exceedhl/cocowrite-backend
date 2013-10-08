@@ -6,7 +6,7 @@ class CreateProjects < ActiveRecord::Migration
       t.string :description
       t.string :url
       t.string :uuid
-      t.datetime :created_at
+      t.datetime :created_at, :default => Time.now
     end
     
     def down

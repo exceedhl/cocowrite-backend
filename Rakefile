@@ -33,5 +33,5 @@ namespace :db do
 end
 
 def db_conf
-  config = YAML.load(ERB.new(File.read('config/database.yml')).result)
+  config = YAML.load(ERB.new(File.read('config/settings.yml')).result)['db']
 end

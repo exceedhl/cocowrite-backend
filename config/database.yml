@@ -1,7 +1,0 @@
-host: localhost
-adapter: em_mysql2
-encoding: utf8
-database: cocowrite_store
-username: root
-password: password
-pool: 5

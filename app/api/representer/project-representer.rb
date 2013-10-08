@@ -1,5 +1,6 @@
 require 'roar/representer/json'
 require 'roar/representer/feature/hypermedia'
+require 'api/url-helpers'
 
 module ProjectRepresenter
   include Roar::Representer::JSON

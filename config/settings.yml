@@ -1,0 +1,13 @@
+root_url: "http://localhost:9000"
+db:
+  host: localhost
+  adapter: em_mysql2
+  encoding: utf8
+  database: cocowrite_store
+  username: root
+  password: password
+  pool: 20
+document:
+  target_dir: "/Users/huangliang/code/cocowrite/document_store"
+  latex_template: "/Users/huangliang/code/cocowrite/cntest/docs/mytemplate.tex"
+  server_root_url: "http://localhost:8888"

@@ -1,5 +1,5 @@
 require 'model/project'
-require 'api/representer/project_representer'
+require 'api/representer/project-representer'
 require 'em-synchrony/em-http'
 
 module Cocowrite
@@ -18,8 +18,6 @@ module Cocowrite
     class Projects < Grape::API
       
       format :json
-      content_type :txt, "text/plain"
-      default_error_formatter :txt
       
       rescue_from :all
       
@@ -37,8 +35,7 @@ module Cocowrite
                 :name => res["name"], 
                 :full_name => res["full_name"],
                 :description => res["description"], 
-                :url => res["html_url"], 
-                :created_at => Time.now})
+                :url => res["html_url"]})
               .extend(ProjectRepresenter)
           else
             error!(JSON.parse(req.response)["message"], 403)

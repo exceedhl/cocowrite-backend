@@ -28,7 +28,7 @@ module Cocowrite
               error!("Project with uuid #{params[:uuid]} is not found", 404) if projects.size == 0
               project = projects.first
               client = GitHubClient.new
-              response = client.get "/repos/#{project.full_name}/git/blobs/#{params[:sha]}"
+              response = client.get "/repos/#{project.full_name}/git/blobs/#{params[:sha]}", {"Accept" => "application/vnd.github.VERSION.raw"}
               if (response.ok?) 
                 cd = CompiledDocument.create(
                   :project => project, 

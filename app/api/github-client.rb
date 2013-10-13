@@ -7,8 +7,8 @@ module Cocowrite
       
       ROOT_URL = "https://api.github.com"
       
-      def get(resource)
-        req = EM::HttpRequest.new("#{ROOT_URL}#{resource}").get
+      def get(resource, headers = {})
+        req = EM::HttpRequest.new("#{ROOT_URL}#{resource}").get :head => headers
         RestResponse.new req.response_header, req.response
       end
       

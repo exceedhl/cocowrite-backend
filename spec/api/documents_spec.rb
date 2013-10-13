@@ -20,7 +20,7 @@ describe "Documents api" do
       docsha = "fefa1e283874e4a87d88a99b39402d3797d966db"
       project = Project.make!
       response = "some doc contnet"
-      stub_request(:get, "https://api.github.com/repos/#{project.full_name}/git/blobs/#{docsha}")
+      stub_request(:get, "https://api.github.com/repos/#{project.full_name}/git/blobs/#{docsha}").with(:headers => {"Accept" => "application/vnd.github.VERSION.raw"})
         .to_return(:body => response, :status => 200)
       
       get "/projects/#{project.uuid}/documents/#{docsha}/pdf"
@@ -62,7 +62,7 @@ describe "Documents api" do
       docsha = "fefa1e283874e4a87d88a99b39402d3797d966db"
       project = Project.make!
       response = "some doc contnet"
-      stub_request(:get, "https://api.github.com/repos/#{project.full_name}/git/blobs/#{docsha}")
+      stub_request(:get, "https://api.github.com/repos/#{project.full_name}/git/blobs/#{docsha}").with(:headers => {"Accept" => "application/vnd.github.VERSION.raw"})
         .to_return(:body => response, :status => 200)
       Cocowrite::DocumentConverter::LATEX_TEMPLATE = "non/existent/template"
       

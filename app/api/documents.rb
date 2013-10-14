@@ -27,6 +27,8 @@ module Cocowrite
               projects = Project.where(:uuid => params[:uuid])
               error!("Project with uuid #{params[:uuid]} is not found", 404) if projects.size == 0
               project = projects.first
+              cd = CompiledDocument.where({:project_id => project, :sha => params[:sha], :format => format})
+              return cd.first.extend(CompiledDocumentRepresenter) if cd.size > 0
               client = GitHubClient.new
               response = client.get "/repos/#{project.full_name}/git/blobs/#{params[:sha]}", {"Accept" => "application/vnd.github.VERSION.raw"}
               if (response.ok?) 

@@ -23,6 +23,10 @@ module Cocowrite
         @body = body
       end
       
+      def status
+        @header.status
+      end
+      
       def ok?
         @header.status == 200
       end

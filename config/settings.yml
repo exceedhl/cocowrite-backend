@@ -1,4 +1,9 @@
 root_url: "http://localhost:9000"
+front_root_url: "http://www.cocowrite.com"
+root_domain: "cocowrite.com"
+github:
+  client_id: "client id"
+  client_secret: "client secret"
 db:
   host: localhost
   adapter: em_mysql2

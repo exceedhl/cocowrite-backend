@@ -1,5 +1,6 @@
 require 'machinist/active_record'
 require 'model/project'
+require 'model/session'
 
 Project.blueprint do
   name { "clabric" }  
@@ -9,3 +10,9 @@ Project.blueprint do
   created_at { Time.now }
 end
 
+Session.blueprint do
+  uuid { "test-session-id" }
+  github_username { "exceedhl" }
+  github_token { "test-token" }
+  created_at { Time.now }
+end

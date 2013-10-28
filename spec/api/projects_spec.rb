@@ -44,7 +44,7 @@ describe "Projects api" do
       expect(p.url).to eq(url)
     end
     
-    it 'should return error if github repo url is invalid' do
+    it 'should return 403 if github repo url is invalid' do
       repo_fullname = "someone/invalidrepo"
       response = <<-END
       {
@@ -62,7 +62,7 @@ describe "Projects api" do
       expect(Project.all.size).to be(0)
     end
     
-    it 'should return error if param is incorrect' do
+    it 'should return 403 if param is incorrect' do
       post "/projects", {:repo => "incorrect param"}
       expect(last_response.status).to be(403)
       body = JSON.parse(last_response.body)

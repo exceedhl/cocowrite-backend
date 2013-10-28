@@ -26,7 +26,8 @@ module Goliath
         include Goliath::Rack::AsyncMiddleware
 
         DEFAULT_CORS_HEADERS = {
-          'Access-Control-Allow-Origin' => '*',
+          'Access-Control-Allow-Origin' => 'localhost:8000',
+          'Access-Control-Allow-Credentials' => 'true',
           'Access-Control-Expose-Headers' => 'X-Error-Message,X-Error-Detail,X-RateLimit-Requests,X-RateLimit-MaxRequests',
           'Access-Control-Max-Age' => '172800',
           'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS',
@@ -48,7 +49,7 @@ module Goliath
         end
 
         def post_process(env, status, headers, body)
-          headers['Access-Control-Allow-Origin'] = '*'
+          headers['Access-Control-Allow-Origin'] = 'localhost:8000'
           [status, headers, body]
         end
       end

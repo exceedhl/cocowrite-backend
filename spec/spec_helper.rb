@@ -16,13 +16,6 @@ RSpec.configure do |c|
   c.include Rack::Test::Methods
   c.include Cocowrite::API::UrlHelpers
   
-  c.around(:each) do |example|
-    EM.synchrony do
-      example.run
-      EM.stop
-    end
-  end
-  
 end
 
 require 'blueprint'

@@ -12,6 +12,7 @@ gem 'em-synchrony', :git => 'git://github.com/igrigorik/em-synchrony.git',
                             
 gem 'goliath'
 gem 'uuidtools'
+gem 'http-cookie'
 
 group :development do
   gem 'rspec'

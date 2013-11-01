@@ -1,6 +1,4 @@
 require 'model/session'
-require 'em-synchrony/em-http'
-require 'model/session'
 require 'api/github-client'
 
 module Cocowrite
@@ -18,10 +16,10 @@ module Cocowrite
         requires :code, type: String, desc: "Github temp code."
       end
       get "/authenticated" do 
-        client = GitHubClient.new
-        res = client.post ACCESS_TOKEN_URL, {:client_id => CONFIG["github"]["client_id"], :client_secret => CONFIG["github"]["client_secret"], :code => params[:code]}, {"Accept" => "application/json"}
+        client = GithubClient.new
+        res = client.post(ACCESS_TOKEN_URL, {:client_id => CONFIG["github"]["client_id"], :client_secret => CONFIG["github"]["client_secret"], :code => params[:code]}, {"Accept" => "application/json"})
         error! "can not get access token", 401 unless res.ok?
-        userinfo = client.get "/user", {}, "access_token=#{res.data["access_token"]}"
+        userinfo = client.get "/user", {}, {"access_token" => res.data["access_token"]}
         error! "can not fetch user info", 403 unless userinfo.ok?
         session = Session.create({:github_token => res.data["access_token"], :github_username => userinfo.data["name"]})
         cookies[:session_id] = {
@@ -30,12 +28,6 @@ module Cocowrite
           :path => "/"
         }
         redirect CONFIG["front_root_url"]
-      end
-      
-      get "/login_status" do
-        error! "no session found", 401 if cookies[:session_id].nil?
-        session = Session.where(:uuid => cookies[:session_id]).first
-        error! "session invalid", 401 if session.nil?
       end
     end
   end

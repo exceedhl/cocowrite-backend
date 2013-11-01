@@ -3,17 +3,21 @@ require 'em-synchrony/em-http'
 module Cocowrite
   module API
 
-    class GitHubClient
+    class GithubClient
       
       ROOT_URL = "https://api.github.com"
       
+      def initialize(options = {})
+        @options = options
+      end
+      
       def get(resource, headers = {}, query = {})
-        req = EM::HttpRequest.new(getUrl(resource)).get :head => headers, :query => query
+        req = EM::HttpRequest.new(getUrl(resource)).get :head => headers, :query => @options.merge(query)
         RestResponse.new req.response_header, req.response
       end
       
       def post(resource, body, headers = {}) 
-        req = EM::HttpRequest.new(getUrl(resource)).post :body => body, :head => headers
+        req = EM::HttpRequest.new(getUrl(resource)).post :body => @options.merge(body), :head => headers
         RestResponse.new req.response_header, req.response
       end
       

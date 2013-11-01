@@ -7,7 +7,14 @@ describe "Projects api" do
   def app
     Cocowrite::API::Projects
   end
-  
+    
+  around(:each) do |example|
+    EM.synchrony do
+      example.run
+      EM.stop
+    end
+  end
+
   before(:each) do
     Project.delete_all
   end

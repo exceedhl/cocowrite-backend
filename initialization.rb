@@ -2,6 +2,7 @@ require "rubygems"
 require "bundler/setup"
 require "em-synchrony"
 require "em-synchrony/activerecord"
+require "goliath"
 require "grape"
 require 'enum_accessor'
 

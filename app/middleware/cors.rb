@@ -26,16 +26,19 @@ module Goliath
         include Goliath::Rack::AsyncMiddleware
 
         DEFAULT_CORS_HEADERS = {
-          'Access-Control-Allow-Origin' => 'localhost:8000',
+          'Access-Control-Allow-Origin' => 'http://www.local.xxx:8000',
           'Access-Control-Allow-Credentials' => 'true',
           'Access-Control-Expose-Headers' => 'X-Error-Message,X-Error-Detail,X-RateLimit-Requests,X-RateLimit-MaxRequests',
           'Access-Control-Max-Age' => '172800',
-          'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS',
-          'Access-Control-Allow-Headers' => 'X-Requested-With,Content-Type'
         }
 
+        DEFAULT_PREFLIGHT_CORS_HEADERS = {
+          'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS',
+          'Access-Control-Allow-Headers' => 'X-Requested-With,Content-Type'
+        }.merge(DEFAULT_CORS_HEADERS)
+
         def access_control_headers(env)
-          cors_headers = DEFAULT_CORS_HEADERS.dup
+          cors_headers = DEFAULT_PREFLIGHT_CORS_HEADERS
           client_headers_to_approve = env['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'].to_s.gsub(/[^\w\-\,]+/,'')
           cors_headers['Access-Control-Allow-Headers'] += ",#{client_headers_to_approve}" if not client_headers_to_approve.empty?
           cors_headers
@@ -49,8 +52,7 @@ module Goliath
         end
 
         def post_process(env, status, headers, body)
-          headers['Access-Control-Allow-Origin'] = 'localhost:8000'
-          [status, headers, body]
+          [status, headers.merge(DEFAULT_CORS_HEADERS), body]
         end
       end
 

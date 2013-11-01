@@ -1,25 +1,23 @@
 $:.unshift(File.dirname(__FILE__) + '/')
 
 require 'initialization'
-require 'goliath'
-require 'api/all'
+require 'api/application'
 require 'middleware/cors'
-require 'api/github-client'
+require 'middleware/github-authenticator'
 
-class Application < Goliath::API
+class DevGithubAuthenticator
+  include Goliath::Rack::AsyncMiddleware
   
-  use Goliath::Contrib::Rack::CorsAccessControl
-  
-  def response(env)
-    m = /^\/github(.*)/.match(env['REQUEST_PATH'])
-    if m
-      headers = { "Accept" => env["HTTP_ACCEPT"] }
-      client = Cocowrite::API::GitHubClient.new
-      response = client.get m[1], headers
-      [response.status, response.header, response.body]
-    else
-      Cocowrite::API::All.call(env)
-    end
+  def call(env)
+    env["githubClient"] = Cocowrite::API::GithubClient.new(
+      {"client_id" => CONFIG["github"]["client_id"], 
+        "client_secret" => CONFIG["github"]["client_secret"]})
+    super(env)
   end
+end
 
+class Server < Application
+  use Goliath::Contrib::Rack::CorsAccessControl
+  use GithubAuthenticator unless Goliath.env?('development')
+  use DevGithubAuthenticator if Goliath.env?('development')
 end

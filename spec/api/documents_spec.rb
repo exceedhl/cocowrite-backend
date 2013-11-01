@@ -9,6 +9,13 @@ describe "Documents api" do
     Cocowrite::API::Documents
   end
   
+  around(:each) do |example|
+    EM.synchrony do
+      example.run
+      EM.stop
+    end
+  end
+
   before(:each) do
     Project.delete_all
     CompiledDocument.delete_all

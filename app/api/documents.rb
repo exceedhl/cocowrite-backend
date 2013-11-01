@@ -2,12 +2,14 @@ require 'model/project'
 require 'model/compiled-document'
 require 'api/representer/compiled-document-representer'
 require 'util/document-converter'
-require 'api/github-client'
+require 'api/helpers'
 
 module Cocowrite
   module API
     
     class Documents < Grape::API
+      
+      helpers Helpers
       
       format :json
       
@@ -29,8 +31,7 @@ module Cocowrite
               project = projects.first
               cd = CompiledDocument.where({:project_id => project, :sha => params[:sha], :format => format})
               return cd.first.extend(CompiledDocumentRepresenter) if cd.size > 0
-              client = GitHubClient.new
-              response = client.get "/repos/#{project.full_name}/git/blobs/#{params[:sha]}", 
+              response = githubClient.get "/repos/#{project.full_name}/git/blobs/#{params[:sha]}", 
                                     {"Accept" => "application/vnd.github.VERSION.raw"}
               if (response.ok?) 
                 cd = CompiledDocument.create(

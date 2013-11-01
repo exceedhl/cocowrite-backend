@@ -1,6 +1,6 @@
 require 'model/project'
 require 'api/representer/project-representer'
-require 'api/github-client'
+require 'api/helpers'
 
 module Cocowrite
   module API
@@ -17,6 +17,8 @@ module Cocowrite
     
     class Projects < Grape::API
       
+      helpers Helpers
+      
       format :json
       
       rescue_from :all
@@ -28,8 +30,7 @@ module Cocowrite
         end
         post do
           repo_fullname = GITHUB_URL_PATTERN.match(params[:repo])[:repo_fullname]
-          client = GitHubClient.new
-          res = client.get "/repos/#{repo_fullname}"
+          res = githubClient.get "/repos/#{repo_fullname}"
           if (res.ok?) 
             data = res.data
             Project.create({

@@ -2,10 +2,17 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'api/authenticate'
 require 'model/session'
 
-describe "Authenticate" do
+describe "Authenticate api" do
 
   def app
     Cocowrite::API::Authenticate
+  end
+  
+  around(:each) do |example|
+    EM.synchrony do
+      example.run
+      EM.stop
+    end
   end
   
   before(:each) do
@@ -71,26 +78,4 @@ END
     
   end
  
-  context 'when GET /login_status' do
-    
-    it 'should return 401 if session is not found' do
-      get "/login_status"
-      expect(last_response.status).to be(401)
-    end
-    
-    it 'should return 401 if session is invalid' do
-      header "cookie", 'session_id=invalid_cookie; $Path="/"'
-      get "/login_status"
-      expect(last_response.status).to be(401)
-    end
-    
-    it 'should return 200 if session is ok' do
-      Session.make!
-      header "cookie", 'session_id=test-session-id; $Path="/"'
-      get "/login_status"
-      expect(last_response.status).to be(200)
-    end
-    
-  end
-  
 end

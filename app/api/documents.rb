@@ -60,4 +60,3 @@ module Cocowrite
     end
   end
 end
-2

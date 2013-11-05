@@ -1,4 +1,4 @@
-root_url: "http://localhost:9000"
+root_url: "http://www.local.xxx:9000"
 front_root_url: "http://www.cocowrite.com"
 root_domain: "cocowrite.com"
 github:
@@ -15,4 +15,4 @@ db:
 document:
   target_dir: "/Users/huangliang/code/cocowrite/document_store"
   latex_template: "/Users/huangliang/code/cocowrite/cntest/docs/mytemplate.tex"
-  server_root_url: "http://localhost:8888"
+  server_root_url: "http://www.local.xxx:8888"

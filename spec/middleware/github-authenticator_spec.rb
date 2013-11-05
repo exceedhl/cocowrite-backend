@@ -13,7 +13,7 @@ class StubApi < Goliath::API
       client = env['githubClient']
       client.get "/user"
       client.post "/user", {}
-      [200, {}, ""]
+      [200, {}, env['session'].github_username]
     end
   end
 end
@@ -48,7 +48,7 @@ describe "GithubAuthenticator" do
       get_request({:path => "/", 
           :head => {"Cookie" => 'session_id=test-session-id; $Path="/"'}}) do |req|
         expect(req.response_header.status).to be(200)
-        expect(req.response).to be_empty
+        expect(req.response).to eq("exceedhl")
       end
     end
   end

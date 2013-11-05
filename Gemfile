@@ -15,6 +15,7 @@ gem 'uuidtools'
 gem 'http-cookie'
 
 group :development do
+  gem 'rake'
   gem 'rspec'
   gem 'rspec-extra-formatters'
   gem 'machinist'

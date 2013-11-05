@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require "api/projects"
 require "model/project"
+require "model/session"
 
 describe "Projects api" do
 
@@ -17,11 +18,13 @@ describe "Projects api" do
 
   before(:each) do
     Project.delete_all
+    Session.delete_all
   end
   
-  context 'when POST /projects' do
+  context 'when POST /users/:github_username/projects' do
     
     it 'should create a new project from a github repo' do
+      github_username = "exceedhl"
       repo_fullname = "exceedhl/clabric"
       name = "clabric"
       description = "fabric like tool for clojure"
@@ -37,10 +40,11 @@ describe "Projects api" do
       stub_request(:get, "https://api.github.com/repos/#{repo_fullname}")
         .to_return(:body => response, :status => 200)
       
-      post "/projects", {:repo => "https://github.com/#{repo_fullname}"}
+      post "/users/#{github_username}/projects", {:repo => "https://github.com/#{repo_fullname}"}
       expect(last_response.status).to be(201)
       body = JSON.parse(last_response.body)
       expect(body['name']).to eq(name)
+      expect(body['github_username']).to eq(github_username)
       expect(body['full_name']).to eq(repo_fullname)
       expect(body['description']).to eq(description)
       expect(body['url']).to eq(url)
@@ -62,7 +66,7 @@ describe "Projects api" do
       stub_request(:get, "https://api.github.com/repos/#{repo_fullname}")
         .to_return(:body => response, :status => 404)
 
-      post "/projects", {:repo => "https://github.com/#{repo_fullname}"}
+      post "/users/someone/projects", {:repo => "https://github.com/#{repo_fullname}"}
       expect(last_response.status).to be(403)
       body = JSON.parse(last_response.body)
       expect(body['error']).to eq("Some error from github")
@@ -70,7 +74,7 @@ describe "Projects api" do
     end
     
     it 'should return 403 if param is incorrect' do
-      post "/projects", {:repo => "incorrect param"}
+      post "/users/someone/projects", {:repo => "incorrect param"}
       expect(last_response.status).to be(403)
       body = JSON.parse(last_response.body)
       expect(body['error']).to eq("You must provide a valid github repo url")
@@ -78,14 +82,15 @@ describe "Projects api" do
 
   end
   
-  context "when GET /projects/:uuid" do
+  context "when GET /users/:github_username/projects/:uuid" do
   
     it 'should return project by uuid' do
       project = Project.make!
-      get "/projects/#{project.uuid}"
+      get "/users/#{project.github_username}/projects/#{project.uuid}"
       body = JSON.parse(last_response.body)
       expect(last_response.status).to be(200)
       expect(body['name']).to eq(project.name)
+      expect(body['github_username']).to eq(project.github_username)
       expect(body['description']).to eq(project.description)
       expect(body['url']).to eq(project.url)
       expect(body['uuid']).to eq(project.uuid)
@@ -97,9 +102,20 @@ describe "Projects api" do
       expect(last_response.status).to be(404)      
     end
     
-    it 'should return 405 if no uuid id provided' do
-      get "/projects"
-      expect(last_response.status).to be(405)      
+  end
+  
+  context "when GET /users/:github_username/projects" do
+    
+    it 'should return session owners projects' do
+      p = Project.make!
+      p2 = Project.make!(:name => "p2")
+      Project.make!(:name => "p3", :github_username => "someone")
+      get "/users/#{p.github_username}/projects"
+      projects = JSON.parse(last_response.body)
+      expect(last_response.status).to be(200)
+      expect(projects.size).to be(2)
+      expect(projects[0]['project']['name']).to eq(p.name)
+      expect(projects[1]['project']['name']).to eq(p2.name)
     end
     
   end

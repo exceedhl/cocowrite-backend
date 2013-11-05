@@ -14,6 +14,7 @@ class GithubAuthenticator
       session  = Session.where(uuid: session_id).first
       return [401, {"Content-type" => "application/json"}, '{"error":"session invalid"}'] if session.nil?
       env["githubClient"] = Cocowrite::API::GithubClient.new({"access_token" => session.github_token})
+      env["session"] = session
     end
     super(env)
   end

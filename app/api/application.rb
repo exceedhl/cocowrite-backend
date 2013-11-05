@@ -3,7 +3,6 @@ require 'api/all'
 class Application < Goliath::API
   
   def response(env)
-    puts Goliath.env
     path = env['REQUEST_PATH']
     m = /^\/github(.*)/.match(path)
     if m

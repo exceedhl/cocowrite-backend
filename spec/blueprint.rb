@@ -4,6 +4,7 @@ require 'model/session'
 
 Project.blueprint do
   name { "clabric" }  
+  github_username { "exceedhl" }  
   full_name {"exceedhl/clabric"}
   description { "fabric in closure" }
   url { "http://github.com/exceedhl/clabric" }

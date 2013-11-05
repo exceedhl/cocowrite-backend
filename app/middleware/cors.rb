@@ -1,27 +1,6 @@
 module Goliath
   module Contrib
     module Rack
-
-      #
-      # Provides Cross-Origin Resource Sharing headers, a superior alternative to
-      # JSON-p responses.
-      #
-      # This implementation is **entirely promiscuous**: it says "yep, that is
-      # allowed" to _any_ request. The more circumspect user should investigate
-      # https://github.com/cyu/rack-cors/
-      #
-      # @example
-      # # A request with method OPTIONS and Access-Control-Request-Headers set
-      # # to 'Content-Type,X-Zibit' would receive headers
-      # {
-      # 'Access-Control-Allow-Origin' => '*',
-      # 'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS',
-      # 'Access-Control-Max-Age' => '172800',
-      # 'Access-Control-Expose-Headers' => 'X-Error-Message,X-Error-Detail,X-RateLimit-Requests,X-RateLimit-MaxRequests',
-      # 'Access-Control-Allow-Headers' => 'X-Requested-With,Content-Type,X-Zibit'
-      # }
-      #
-      #
       class CorsAccessControl
         include Goliath::Rack::AsyncMiddleware
 
@@ -52,7 +31,8 @@ module Goliath
         end
 
         def post_process(env, status, headers, body)
-          [status, headers.merge(DEFAULT_CORS_HEADERS), body]
+          # TODO: github's headers' keys are all upper case, which causes the duplication of cors headers
+          [status, DEFAULT_CORS_HEADERS.merge(headers), body]
         end
       end
 

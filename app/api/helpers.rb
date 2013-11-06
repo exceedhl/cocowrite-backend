@@ -9,6 +9,10 @@ module Cocowrite
         env["githubClient"] || GithubClient.new 
       end
       
+      def logger
+        Grape::API.logger
+      end
+      
     end
   end
 end

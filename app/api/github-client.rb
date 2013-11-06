@@ -9,15 +9,20 @@ module Cocowrite
       
       def initialize(options = {})
         @options = options
+        @logger = Grape::API.logger
       end
       
       def get(resource, headers = {}, query = {})
-        req = EM::HttpRequest.new(getUrl(resource)).get :head => headers, :query => @options.merge(query)
+        url = getUrl(resource)
+        @logger.debug "Get github resource: #{url}"
+        req = EM::HttpRequest.new(url).get :head => headers, :query => @options.merge(query)
         RestResponse.new req.response_header, req.response
       end
       
       def post(resource, body, headers = {}) 
-        req = EM::HttpRequest.new(getUrl(resource)).post :body => @options.merge(body), :head => headers
+        url = getUrl(resource)
+        @logger.debug "Post github resource: #{url}"
+        req = EM::HttpRequest.new(url).post :body => @options.merge(body), :head => headers
         RestResponse.new req.response_header, req.response
       end
       

@@ -23,7 +23,7 @@ describe "Documents api" do
 
   context 'when GET /projects/:uuid/documents/:sha/pdf' do
     
-    xit 'should return a url of generated pdf file' do
+    it 'should return a url of generated pdf file' do
       docsha = "fefa1e283874e4a87d88a99b39402d3797d966db"
       project = Project.make!
       response = "some doc contnet"
@@ -37,7 +37,7 @@ describe "Documents api" do
       expect(cd.status).to eq(:compilation_succeed)
     end
     
-    xit 'should not generate pdf twice for same file' do
+    it 'should not generate pdf twice for same file' do
       docsha = "fefa1e283874e4a87d88a99b39402d3797d966db"
       project = Project.make!
       response = "some doc contnet"
@@ -46,8 +46,20 @@ describe "Documents api" do
       
       get "/projects/#{project.uuid}/documents/#{docsha}/pdf"
       get "/projects/#{project.uuid}/documents/#{docsha}/pdf"
-      cd = CompiledDocument.where({:project_id => project, :sha => docsha, :format => 'pdf'})
+      cd = CompiledDocument.where({:project_id => project, :sha => docsha, :format => 'pdf', :status => CompiledDocument.statuses(:compilation_succeed)})
       expect(cd.size).to eq(1)
+    end
+    
+    it 'should genereate pdf if there are no successful generated document' do
+      project = Project.make!
+      cd = CompiledDocument.make!(:project_id => project.id, :status => :compilation_fail, :format => 'pdf')
+      response = "some doc contnet"
+      stub_request(:get, "https://api.github.com/repos/#{project.full_name}/git/blobs/#{cd.sha}").with(:headers => {"Accept" => "application/vnd.github.VERSION.raw"})
+        .to_return(:body => response, :status => 200)
+      
+      get "/projects/#{project.uuid}/documents/#{cd.sha}/pdf"
+      cd = CompiledDocument.where({:project_id => project, :sha => cd.sha, :format => 'pdf'})
+      expect(cd.size).to eq(2)
     end
   
     it 'should return 404 if project not found' do

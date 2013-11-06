@@ -29,7 +29,7 @@ module Cocowrite
               projects = Project.where(:uuid => params[:uuid])
               error!("Project with uuid #{params[:uuid]} is not found", 404) if projects.size == 0
               project = projects.first
-              cd = CompiledDocument.where({:project_id => project, :sha => params[:sha], :format => format})
+              cd = CompiledDocument.where({:project_id => project, :sha => params[:sha], :format => format, :status => CompiledDocument.statuses(:compilation_succeed)})
               return cd.first.extend(CompiledDocumentRepresenter) if cd.size > 0
               response = githubClient.get "/repos/#{project.full_name}/git/blobs/#{params[:sha]}", 
                                     {"Accept" => "application/vnd.github.VERSION.raw"}
@@ -42,8 +42,10 @@ module Cocowrite
                 cd.status = status
                 cd.save!
                 if cd.status_compilation_succeed?
+                  logger.info "#{format} has been generated successfully"
                   cd.extend(CompiledDocumentRepresenter)
                 else
+                  logger.error log
                   error!("Document conversion failed.", 500)
                 end
               else

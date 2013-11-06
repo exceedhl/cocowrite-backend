@@ -15,6 +15,7 @@ RSpec.configure do |c|
   c.include JSONTestHelpers
   c.include Rack::Test::Methods
   c.include Cocowrite::API::UrlHelpers
+  Grape::API.logger.level = Logger::ERROR
   
 end
 
